@@ -7,23 +7,32 @@ import Word from "./components/Word";
 import Notification from "./components/Notification";
 import Popup from "./components/Popup";
 import { showNotification as show } from "./helpers/helpers";
-
-const words = ["application", "programming", "interface", "wizard"];
-
-let selectedWord = words[Math.floor(Math.random() * words.length)];
-
-window.addEventListener("keydown", (e) => {});
+import { RandomWord } from "./helpers/helpers";
 
 function App() {
+    const [selectedWord, setSelectedWord] = useState("");
     const [playable, setPlayable] = useState(true);
     const [correctLetters, setCorrectLetters] = useState([]);
     const [wrongLetters, setWrongLetters] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
 
     useEffect(() => {
+        const getWords = async () => {
+            let wordsArray = await RandomWord();
+            setSelectedWord(
+                wordsArray[Math.floor(Math.random() * wordsArray.length)]
+            );
+        };
+        getWords();
+    }, []);
+
+    useEffect(() => {
         const handleKeydown = (event) => {
             const { key, keyCode } = event;
-            if (playable && keyCode >= 65 && keyCode <= 90) {
+            if (
+                (playable && keyCode >= 65 && keyCode <= 90) ||
+                keyCode === 189
+            ) {
                 const letter = key.toLowerCase();
 
                 if (selectedWord.includes(letter)) {
@@ -50,17 +59,18 @@ function App() {
         window.addEventListener("keydown", handleKeydown);
 
         return () => window.removeEventListener("keydown", handleKeydown);
-    }, [correctLetters, wrongLetters, playable]);
+    }, [correctLetters, wrongLetters, playable, selectedWord]);
 
-    function playAgain() {
+    async function playAgain() {
         setPlayable(true);
 
         // Empty arrays
         setCorrectLetters([]);
         setWrongLetters([]);
 
-        const random = Math.floor(Math.random() * words.length);
-        selectedWord = words[random];
+        const newWords = await RandomWord();
+        const random = Math.floor(Math.random() * newWords.length);
+        setSelectedWord(newWords[random]);
     }
 
     return (

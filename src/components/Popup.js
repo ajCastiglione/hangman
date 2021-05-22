@@ -12,10 +12,16 @@ const Popup = ({
     let finalMsgRevealWord = "";
     let playable = true;
 
-    if (checkWin(correctLetters, wrongLetters, selectedWord) === "win") {
+    if (
+        selectedWord &&
+        checkWin(correctLetters, wrongLetters, selectedWord) === "win"
+    ) {
         finalMsg = "Congratulations! You won!";
         playable = false;
-    } else if (checkWin(correctLetters, wrongLetters, selectedWord)) {
+    } else if (
+        selectedWord &&
+        checkWin(correctLetters, wrongLetters, selectedWord)
+    ) {
         finalMsg = "Unfortunately, you've lost.";
         finalMsgRevealWord = `... the word was: ${selectedWord}`;
         playable = false;
